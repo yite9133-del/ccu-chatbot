@@ -1,29 +1,25 @@
-from flask import Flask, render_template, request, jsonify
-from openai import OpenAI
 import os
+from openai import OpenAI
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+# 讀取 Render 的環境變數
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("OPENAI_API_KEY 未設定！")  # 如果沒設定，會直接報錯
 
-@app.route("/")
-def home():
+client = OpenAI(api_key=api_key)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        user_input = request.form["user_input"]
+        # 這裡可以加上呼叫 OpenAI 的程式碼，例如 ChatGPT 回應
+        return f"你輸入了: {user_input}"
     return render_template("index.html")
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.get_json()
-    user_msg = data.get("message", "")
-    
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "你是中正大學課程與招生資訊小幫手，回答要簡短且正確。"},
-            {"role": "user", "content": user_msg}
-        ]
-    )
-    reply = response.choices[0].message.content.strip()
-    return jsonify({"reply": reply})
-
+# Flask 必須使用 0.0.0.0 + PORT 環境變數
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
