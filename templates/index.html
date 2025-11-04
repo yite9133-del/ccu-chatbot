@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>中正大學 Chatbot</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f4f7; padding: 20px; }
+    .chatbox { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);}
+    .msg { margin: 10px 0; }
+    .user { text-align: right; color: #0066cc; }
+    .bot { text-align: left; color: #333; }
+    #input-area { display: flex; margin-top: 15px; }
+    input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 20px; margin-left: 8px; border: none; background: #0066cc; color: white; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #004c99; }
+  </style>
+</head>
+<body>
+  <div class="chatbox">
+    <h2>💬 中正大學 Chatbot</h2>
+    <div id="chat"></div>
+    <div id="input-area">
+      <input type="text" id="msg" placeholder="輸入你的問題..." onkeydown="if(event.key==='Enter') sendMsg()">
+      <button onclick="sendMsg()">送出</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMsg() {
+      const input = document.getElementById("msg");
+      const chat = document.getElementById("chat");
+      const userMsg = input.value.trim();
+      if (!userMsg) return;
+
+      chat.innerHTML += `<div class='msg user'><b>你：</b> ${userMsg}</div>`;
+      input.value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: userMsg})
+      });
+      const data = await res.json();
+      const reply = data.reply.replace(/\n/g, "<br>");
+      chat.innerHTML += `<div class='msg bot'><b>🤖 Chatbot：</b> ${reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
