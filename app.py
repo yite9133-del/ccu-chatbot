@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# 設定 OpenAI API 金鑰
+# 讀取 Render 的環境變數
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("OPENAI_API_KEY 未設定！")
