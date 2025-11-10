@@ -4,15 +4,15 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# 改用 os.getenv() 讀取環境變數
+# 嘗試讀取 API 金鑰
 openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:
-    raise ValueError("OPENAI_API_KEY 未設定！")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     reply = ""
-    if request.method == "POST":
+    if not openai.api_key:
+        reply = "❌ 系統尚未設定 OpenAI 金鑰，請聯絡管理者或在 Render 設定環境變數。"
+    elif request.method == "POST":
         user_input = request.form.get("user_input", "")
         if user_input:
             try:
@@ -22,7 +22,7 @@ def index():
                 )
                 reply = response.choices[0].message.content
             except Exception as e:
-                reply = f"發生錯誤：{str(e)}"
+                reply = f"⚠️ 發生錯誤：{str(e)}"
     return render_template("index.html", reply=reply)
 
 @app.route("/ping")
