@@ -4,8 +4,8 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# 讀取 Render 的環境變數
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# 改用 os.getenv() 讀取環境變數
+openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("OPENAI_API_KEY 未設定！")
 
@@ -30,5 +30,5 @@ def ping():
     return "pong", 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
