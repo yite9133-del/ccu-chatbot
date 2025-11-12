@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>CCU Chatbot</title>
+</head>
+<body>
+    <h1>CCU Chatbot</h1>
+    <form method="POST">
+        <label for="user_input">請輸入訊息：</label><br>
+        <textarea name="user_input" rows="4" cols="50"></textarea><br><br>
+        <button type="submit">送出</button>
+    </form>
+    {% if reply %}
+        <h2>回應：</h2>
+        <p>{{ reply }}</p>
+    {% endif %}
+</body>
+</html>
